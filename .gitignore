@@ -1,0 +1,50 @@
+# Python
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Secrets and credentials
+.env
+.env.local
+.cache-spotify
+.shield-cert/
+*.pem
+*.key
+*.cert
+*.crt
+
+# Node
+node_modules/
+package-lock.json
+
+# Logs and debug output
+logs/
+*.log
+
+# Audio artifacts
+*.wav
+*.mp3
+
+# User-specific runtime config (ticker symbols, model selection)
+config.json
+
+# System config (deployed separately, not part of the app)
+raspotify.conf
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code context (session-specific)
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db

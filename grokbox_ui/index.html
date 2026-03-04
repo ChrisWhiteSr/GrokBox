@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrokBox</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient background layer -->
+  <div id="ambient">
+    <div class="ambient-img active"></div>
+    <div class="ambient-img"></div>
+  </div>
+
+  <!-- Top-left: Model selector pill -->
+  <div id="model-selector" class="glass-pill">
+    <span id="model-name">grok-4-fast</span>
+    <span class="chevron">&#9662;</span>
+    <div id="model-dropdown" class="dropdown hidden">
+      <div class="dropdown-item active">grok-4-1-fast-non-reasoning</div>
+      <div class="dropdown-item">grok-4-1-fast-reasoning</div>
+      <div class="dropdown-item">grok-4-0709</div>
+      <div class="dropdown-item">grok-3</div>
+      <div class="dropdown-item">grok-3-mini</div>
+      <div class="dropdown-item">gpt-4o</div>
+      <div class="dropdown-item">gpt-4o-mini</div>
+      <div class="dropdown-item">gpt-4.1</div>
+      <div class="dropdown-item">o4-mini</div>
+    </div>
+  </div>
+
+  <!-- Top-center: Clock -->
+  <div id="clock-widget" class="glass-pill">
+    <span id="clock-time">12:00</span>
+    <span id="clock-sep">&#183;</span>
+    <span id="clock-date">Thu, Feb 27</span>
+  </div>
+
+  <!-- Top-right: Health panel -->
+  <div id="health-panel">
+    <div class="health-row"><span class="health-dot" id="h-daemon"></span><span class="health-label">Daemon</span></div>
+    <div class="health-row"><span class="health-dot" id="h-kokoro"></span><span class="health-label">Kokoro TTS</span></div>
+    <div class="health-row"><span class="health-dot" id="h-xai"></span><span class="health-label">xAI Grok</span></div>
+    <div class="health-row"><span class="health-dot" id="h-assemblyai"></span><span class="health-label">AssemblyAI</span></div>
+    <div class="health-row"><span class="health-dot" id="h-pipewire"></span><span class="health-label">PipeWire</span></div>
+    <div class="health-row"><span class="health-dot" id="h-bt"></span><span class="health-label">BT Speaker</span></div>
+    <div class="health-row"><span class="health-dot" id="h-raspotify"></span><span class="health-label">Raspotify</span></div>
+  </div>
+
+  <!-- Status panel (below health) -->
+  <div id="status-panel" class="glass-pill">
+    <svg id="mic-icon" class="mic-icon" viewBox="0 0 24 24" width="20" height="20">
+      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+      <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+    </svg>
+    <span id="status-label">listening</span>
+    <svg class="chip-icon" viewBox="0 0 24 24" width="20" height="20">
+      <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <rect x="8" y="8" width="8" height="8" rx="1" fill="currentColor" opacity="0.4"/>
+      <line x1="1" y1="8" x2="4" y2="8" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="1" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="1" y1="16" x2="4" y2="16" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="20" y1="8" x2="23" y2="8" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="20" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="20" y1="16" x2="23" y2="16" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="8" y1="1" x2="8" y2="4" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="12" y1="1" x2="12" y2="4" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="16" y1="1" x2="16" y2="4" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="8" y1="20" x2="8" y2="23" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="12" y1="20" x2="12" y2="23" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="16" y1="20" x2="16" y2="23" stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <!-- Shield TV remote widget (lower-left, above Spotify) -->
+  <div id="shield-widget" class="glass-card">
+    <div class="shield-header">
+      <span class="shield-label">Shield</span>
+      <span id="shield-app" class="shield-app-name"></span>
+      <button id="shield-power" class="shield-btn power-off" title="Power">&#9211;</button>
+    </div>
+    <div class="shield-apps">
+      <button class="shield-app-btn" data-app="youtube tv">YTTV</button>
+      <button class="shield-app-btn" data-app="plex">PLEX</button>
+      <button class="shield-app-btn" data-app="apple tv">ATV</button>
+      <button class="shield-app-btn" data-app="stremio">STRM</button>
+      <button class="shield-app-btn" data-app="smarttube">SMTB</button>
+      <button class="shield-app-btn" data-app="prime video">AMZN</button>
+      <button class="shield-app-btn" data-app="spotify">SPOT</button>
+    </div>
+    <div class="shield-dpad">
+      <button class="shield-key-btn" data-key="up">&#9650;</button>
+      <div class="shield-dpad-mid">
+        <button class="shield-key-btn" data-key="left">&#9664;</button>
+        <button class="shield-key-btn select" data-key="select">OK</button>
+        <button class="shield-key-btn" data-key="right">&#9654;</button>
+      </div>
+      <button class="shield-key-btn" data-key="down">&#9660;</button>
+      <div class="shield-dpad-row">
+        <button class="shield-key-btn" data-key="back">&#9194;</button>
+        <button class="shield-key-btn" data-key="home">&#9679;</button>
+        <button class="shield-key-btn" data-key="playpause">&#9199;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spotify now-playing widget (lower-left, floating) -->
+  <div id="spotify-widget" class="glass-card hidden">
+    <img id="spotify-art" src="" alt="">
+    <div id="spotify-info">
+      <div id="spotify-track"></div>
+      <div id="spotify-artist"></div>
+      <div id="spotify-album"></div>
+    </div>
+    <div id="spotify-controls">
+      <button class="sp-btn" id="sp-prev" title="Previous">&#9198;</button>
+      <button class="sp-btn" id="sp-play" title="Play/Pause">&#9208;</button>
+      <button class="sp-btn" id="sp-next" title="Next">&#9197;</button>
+    </div>
+  </div>
+
+  <!-- 5-day weather widget (lower-right, floating) -->
+  <div id="weather-widget" class="glass-card">
+    <div class="wx-day">
+      <div class="wx-label">MON</div>
+      <div class="wx-icon">&#9925;</div>
+      <div class="wx-temp">65&deg;/<span class="temp-low">52&deg;</span></div>
+    </div>
+    <div class="wx-day">
+      <div class="wx-label">TUE</div>
+      <div class="wx-icon">&#9729;</div>
+      <div class="wx-temp">62&deg;/<span class="temp-low">50&deg;</span></div>
+    </div>
+    <div class="wx-day">
+      <div class="wx-label">WED</div>
+      <div class="wx-icon">&#9928;</div>
+      <div class="wx-temp">68&deg;/<span class="temp-low">54&deg;</span></div>
+    </div>
+    <div class="wx-day">
+      <div class="wx-label">THU</div>
+      <div class="wx-icon">&#127782;</div>
+      <div class="wx-temp">70&deg;/<span class="temp-low">55&deg;</span></div>
+    </div>
+    <div class="wx-day">
+      <div class="wx-label">FRI</div>
+      <div class="wx-icon">&#9728;&#65039;</div>
+      <div class="wx-temp">72&deg;/<span class="temp-low">58&deg;</span></div>
+    </div>
+  </div>
+
+  <!-- Conversation scrim (slim strip) -->
+  <div id="conversation-scrim">
+    <span id="user-text">*hey what's the weather looking like this week*</span>
+  </div>
+
+  <!-- Market ticker (bottom strip) -->
+  <div id="ticker-bar">
+    <div id="ticker-content">
+      <span class="ticker-item">
+        <span class="ticker-symbol">S&amp;P 500</span>
+        <span class="ticker-pct up">+0.32%</span>
+      </span>
+      <span class="ticker-item">
+        <span class="ticker-symbol">NASDAQ</span>
+        <span class="ticker-pct down">-0.15%</span>
+      </span>
+      <span class="ticker-item">
+        <span class="ticker-symbol">TSLA</span>
+        <span class="ticker-pct up">+1.2%</span>
+      </span>
+      <span class="ticker-item">
+        <span class="ticker-symbol">AAPL</span>
+        <span class="ticker-pct down">-0.4%</span>
+      </span>
+      <span class="ticker-item">
+        <span class="ticker-symbol">GOOGL</span>
+        <span class="ticker-pct up">+0.7%</span>
+      </span>
+    </div>
+    <button id="ticker-settings" class="ticker-gear" title="Ticker settings">&#9881;</button>
+  </div>
+
+  <!-- Ticker settings panel -->
+  <div id="ticker-settings-panel" class="hidden">
+    <h3>Ticker Symbols</h3>
+    <ul id="ticker-symbol-list"></ul>
+    <div id="ticker-add-row">
+      <input id="ticker-add-input" type="text" placeholder="e.g. MSFT, ^DJI" />
+      <button id="ticker-add-btn">Add</button>
+    </div>
+    <button id="ticker-save-btn">Save</button>
+  </div>
+
+  <!-- Log drawer (hidden by default, toggle with L) -->
+  <div id="log-drawer" class="hidden">
+    <div id="log-lines"></div>
+  </div>
+
+  <!-- Image overlay -->
+  <div id="image-overlay" class="hidden">
+    <img id="overlay-img" src="" alt="">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

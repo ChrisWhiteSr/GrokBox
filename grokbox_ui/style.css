@@ -1,0 +1,823 @@
+/* ===================================================================
+   GrokBox Display — matches ui_reference.jpg
+   =================================================================== */
+
+:root {
+  --bg:            #000000;
+  --glass:         rgba(0, 0, 0, 0.60);
+  --glass-heavy:   rgba(0, 0, 0, 0.88);
+  --glass-border:  rgba(255, 255, 255, 0.08);
+  --accent:        #00FFCC;
+  --text:          #e6f1ff;
+  --text-dim:      #8892b0;
+  --mic-active:    #00FF88;
+  --mic-inactive:  #FF4444;
+  --ticker-up:     #00FF88;
+  --ticker-down:   #FF4444;
+  --ticker-flat:   #aaaaaa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+  color: var(--text);
+  /* cursor: none; — re-enable for kiosk mode */
+}
+
+/* ----- Ambient background layer ----- */
+
+#ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+.ambient-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 3s ease-in-out;
+}
+
+.ambient-img.active {
+  opacity: 1;
+}
+
+/* ----- Glass pill (shared by model selector + status panel) ----- */
+
+.glass-pill {
+  position: fixed;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  user-select: none;
+}
+
+/* ----- Top-left: Model selector ----- */
+
+#model-selector {
+  top: 20px;
+  left: 24px;
+  cursor: pointer;
+  position: fixed;
+}
+
+#model-selector .chevron {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 260px;
+  background: rgba(10, 15, 30, 0.92);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 6px 0;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.dropdown-item {
+  padding: 10px 18px;
+  font-size: 14px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.dropdown-item.active {
+  color: var(--accent);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ----- Top-center: Clock widget ----- */
+
+#clock-widget {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 24px 60px 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+#clock-time {
+  font-size: 117px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  line-height: 1;
+}
+
+#clock-sep {
+  display: none;
+}
+
+#clock-date {
+  font-size: 27px;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Colon blink animation */
+@keyframes blink-colon {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+#clock-time .colon {
+  animation: blink-colon 1s step-end infinite;
+}
+
+/* ----- Top-right: Health panel ----- */
+
+#health-panel {
+  position: fixed;
+  z-index: 10;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 11px;
+  font-weight: 500;
+  user-select: none;
+}
+
+.health-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.health-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.health-dot.up {
+  background: var(--ticker-up);
+  box-shadow: 0 0 4px var(--ticker-up);
+}
+
+.health-dot.down {
+  background: var(--ticker-down);
+  box-shadow: 0 0 4px var(--ticker-down);
+}
+
+.health-label {
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+
+/* ----- Status panel (below health) ----- */
+
+#status-panel {
+  top: 220px;
+  right: 24px;
+  position: fixed;
+}
+
+.mic-icon {
+  fill: var(--mic-active);
+  flex-shrink: 0;
+}
+
+.mic-icon.inactive {
+  fill: var(--mic-inactive);
+}
+
+.mic-icon.pulse {
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+#status-label {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.chip-icon {
+  color: var(--text-dim);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ----- Spotify now-playing widget ----- */
+
+#spotify-widget {
+  position: fixed;
+  z-index: 5;
+  bottom: 130px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  max-width: 420px;
+}
+
+#spotify-art {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+#spotify-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#spotify-track {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+#spotify-artist {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#spotify-album {
+  font-size: 11px;
+  color: var(--text-dim);
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+#spotify-controls {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.sp-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  padding: 4px 8px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+.sp-btn:hover {
+  opacity: 1;
+}
+
+/* ----- Shield TV remote widget ----- */
+
+#shield-widget {
+  position: fixed;
+  z-index: 5;
+  bottom: 240px;
+  left: 24px;
+  padding: 12px 14px;
+  width: 260px;
+}
+
+.shield-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.shield-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.shield-app-name {
+  flex: 1;
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#shield-power {
+  margin-left: auto;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+
+#shield-power.power-on {
+  color: var(--ticker-up);
+  background: rgba(0, 255, 136, 0.12);
+}
+
+#shield-power.power-off {
+  color: var(--ticker-down);
+  background: rgba(255, 68, 68, 0.1);
+}
+
+.shield-apps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.shield-app-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.shield-app-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text);
+}
+
+.shield-dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.shield-dpad-mid {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.shield-dpad-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.shield-key-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.shield-key-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.shield-key-btn.select {
+  width: 44px;
+  height: 36px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  border-color: rgba(0, 255, 204, 0.15);
+}
+
+.shield-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ----- 5-day weather widget ----- */
+
+#weather-widget {
+  position: fixed;
+  z-index: 5;
+  bottom: 130px;
+  right: 24px;
+  display: flex;
+  gap: 0;
+}
+
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.wx-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px 10px;
+  min-width: 72px;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.wx-day:last-child {
+  border-right: none;
+}
+
+.wx-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.wx-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.wx-temp {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.temp-low {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+/* ----- Conversation scrim ----- */
+
+#conversation-scrim {
+  position: fixed;
+  z-index: 6;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  opacity: 1;
+  transition: opacity 2s ease-out;
+}
+
+#conversation-scrim.fade-out {
+  opacity: 0;
+}
+
+#user-text {
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-dim);
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.user-said {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.jarvis-said {
+  color: var(--text);
+  font-style: normal;
+  font-weight: 500;
+  margin-left: 32px;
+  float: right;
+}
+
+/* ----- Market ticker ----- */
+
+#ticker-bar {
+  position: fixed;
+  z-index: 6;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--glass-heavy);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+#ticker-content {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  white-space: nowrap;
+  animation: ticker-scroll linear infinite;
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.ticker-symbol {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+.ticker-price {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.ticker-pct {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.ticker-pct.up {
+  color: var(--ticker-up);
+}
+
+.ticker-pct.down {
+  color: var(--ticker-down);
+}
+
+.ticker-pct.flat {
+  color: var(--ticker-flat);
+}
+
+.ticker-gear {
+  position: fixed;
+  z-index: 7;
+  bottom: 14px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 22px;
+  padding: 4px 8px;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+
+.ticker-gear:hover {
+  opacity: 1;
+}
+
+/* ----- Log drawer ----- */
+
+#log-drawer {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  right: 0;
+  width: 720px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.92);
+  border-left: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 20px;
+  overflow-y: auto;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ----- Image overlay ----- */
+
+#image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 108px; /* leave room for scrim (52px) + ticker (56px) */
+  z-index: 8; /* above ambient (1) but below status pills (10) */
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#image-overlay img {
+  max-width: 92%;
+  max-height: 92%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* ----- Ticker settings panel ----- */
+
+#ticker-settings-panel {
+  position: fixed;
+  z-index: 30;
+  bottom: 56px;
+  right: 0;
+  width: 340px;
+  background: rgba(10, 15, 30, 0.95);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px 14px 0 0;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 20px;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.5);
+}
+
+#ticker-settings-panel h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#ticker-symbol-list {
+  list-style: none;
+  margin-bottom: 14px;
+}
+
+#ticker-symbol-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 14px;
+  color: var(--text);
+}
+
+#ticker-symbol-list li:last-child {
+  border-bottom: none;
+}
+
+.ticker-remove-btn {
+  background: none;
+  border: none;
+  color: var(--ticker-down);
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  padding: 2px 6px;
+}
+
+.ticker-remove-btn:hover {
+  opacity: 1;
+}
+
+#ticker-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+#ticker-add-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+}
+
+#ticker-add-input::placeholder {
+  color: var(--text-dim);
+  opacity: 0.5;
+}
+
+#ticker-add-input:focus {
+  border-color: var(--accent);
+}
+
+#ticker-add-btn,
+#ticker-save-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#ticker-add-btn:hover,
+#ticker-save-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+#ticker-save-btn {
+  width: 100%;
+  background: rgba(0, 255, 204, 0.12);
+  color: var(--accent);
+  border-color: rgba(0, 255, 204, 0.2);
+}
+
+#ticker-save-btn:hover {
+  background: rgba(0, 255, 204, 0.2);
+}
+
